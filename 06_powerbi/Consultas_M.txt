@@ -1,0 +1,37 @@
+En Power Query, crea una consulta en blanco por cada bloque, abre Editor avanzado y pega el bloque correspondiente. Reemplaza SERVIDOR_SQL. Autentícate con el cuadro de credenciales de Power BI; no pongas una contraseña aquí.
+
+Consulta: FactEntregas
+let
+    Fuente = Sql.Database("SERVIDOR_SQL", "BancoAlimentos_CNPV"),
+    Vista = Fuente{[Schema="CNPV", Item="vw_DetalleEntregas"]}[Data],
+    Tipos = Table.TransformColumnTypes(Vista, {{"FechaEntrega", type date}, {"CantidadEntregada", Int64.Type}})
+in
+    Tipos
+
+Consulta: Inventario
+let
+    Fuente = Sql.Database("SERVIDOR_SQL", "BancoAlimentos_CNPV"),
+    Alimentos = Fuente{[Schema="CNPV", Item="Alimentos"]}[Data],
+    Categorias = Fuente{[Schema="CNPV", Item="CategoriaAlimento"]}[Data],
+    Cruce = Table.NestedJoin(Alimentos, {"IdCategoria"}, Categorias, {"IdCategoria"}, "DatosCategoria", JoinKind.LeftOuter),
+    Expandido = Table.ExpandTableColumn(Cruce, "DatosCategoria", {"NombreCategoria"}, {"Categoria"}),
+    Columnas = Table.SelectColumns(Expandido, {"IdAlimento", "Nombre", "Categoria", "Cantidad", "UnidadMedida", "FechaVencimiento"}),
+    Tipos = Table.TransformColumnTypes(Columnas, {{"Cantidad", Int64.Type}, {"FechaVencimiento", type date}})
+in
+    Tipos
+
+Consulta: Donantes
+let
+    Fuente = Sql.Database("SERVIDOR_SQL", "BancoAlimentos_CNPV"),
+    Tabla = Fuente{[Schema="CNPV", Item="EmpresasDonantes"]}[Data],
+    Columnas = Table.SelectColumns(Tabla, {"IdEmpresa", "RazonSocial", "Estado", "IdCategoria"})
+in
+    Columnas
+
+Consulta: Organizaciones
+let
+    Fuente = Sql.Database("SERVIDOR_SQL", "BancoAlimentos_CNPV"),
+    Tabla = Fuente{[Schema="CNPV", Item="Organizaciones"]}[Data],
+    Columnas = Table.SelectColumns(Tabla, {"IdOrganizacion", "Nombre", "Distrito", "Responsable"})
+in
+    Columnas

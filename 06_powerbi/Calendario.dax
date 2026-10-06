@@ -1,0 +1,12 @@
+-- Crear después de cargar FactEntregas: Modelado > Nueva tabla
+DimFecha =
+ADDCOLUMNS (
+    CALENDAR (
+        MINX ( FactEntregas, FactEntregas[FechaEntrega] ),
+        MAXX ( FactEntregas, FactEntregas[FechaEntrega] )
+    ),
+    "Año", YEAR ( [Date] ),
+    "MesNumero", MONTH ( [Date] ),
+    "Mes", FORMAT ( [Date], "MMMM" ),
+    "AñoMes", FORMAT ( [Date], "YYYY-MM" )
+)

@@ -1,0 +1,37 @@
+-- Crea cada medida por separado con Modelado > Nueva medida.
+Total Entregas = COUNTROWS ( FactEntregas )
+
+Cantidad Distribuida = SUM ( FactEntregas[CantidadEntregada] )
+
+Organizaciones Atendidas = DISTINCTCOUNT ( FactEntregas[Organizacion] )
+
+Empresas Donantes con Entregas = DISTINCTCOUNT ( FactEntregas[Empresa] )
+
+Empresas Donantes Registradas = DISTINCTCOUNT ( Donantes[IdEmpresa] )
+
+Alimentos Entregados Distintos = DISTINCTCOUNT ( FactEntregas[Alimento] )
+
+Stock Disponible = SUM ( Inventario[Cantidad] )
+
+Stock Vencido =
+CALCULATE (
+    SUM ( Inventario[Cantidad] ),
+    FILTER (
+        Inventario,
+        NOT ISBLANK ( Inventario[FechaVencimiento] )
+            && Inventario[FechaVencimiento] < TODAY ()
+            && Inventario[Cantidad] > 0
+    )
+)
+
+Stock por Vencer en 30 Días =
+CALCULATE (
+    SUM ( Inventario[Cantidad] ),
+    FILTER (
+        Inventario,
+        NOT ISBLANK ( Inventario[FechaVencimiento] )
+            && Inventario[FechaVencimiento] >= TODAY ()
+            && Inventario[FechaVencimiento] <= TODAY () + 30
+            && Inventario[Cantidad] > 0
+    )
+)
