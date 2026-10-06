@@ -1,0 +1,16 @@
+.env
+.venv/
+venv/
+myenv/
+__pycache__/
+*.py[cod]
+*.bacpac
+*.bak
+*.log
+reportes/*.html
+reportes/*.pdf
+!evidencias/.gitkeep
+
+01_usuarios_roles/01_logins*.local.sql
+**/reportes/*.html
+**/reportes/*.pdf
